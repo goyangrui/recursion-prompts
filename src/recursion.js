@@ -7,31 +7,121 @@
 // Example: 5! = 5 x 4 x 3 x 2 x 1 = 120
 // factorial(5); // 120
 var factorial = function(n) {
+  // edge case
+  if (n < 0) {
+    return null;
+  }
+
+  // base case
+  if (n === 0) {
+    return 1;
+  }
+
+  // recursive case
+  return n * factorial(n - 1);
 };
 
 // 2. Compute the sum of an array of integers.
 // sum([1,2,3,4,5,6]); // 21
 var sum = function(array) {
+  // edge case(s)
+  if (array.length === 0) {
+    return 0;
+  }
+
+  // base case
+  if (array.length === 1) {
+    return array[0];
+  }
+
+  // recursive case
+  return array[array.length - 1] + sum(array.slice(0, array.length - 1));
 };
 
 // 3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
 var arraySum = function(array) {
+  // keep track of sum in current execution context
+  var sum = 0;
+
+  // base case
+  if (!Array.isArray(array)) {
+    return array;
+  }
+
+  // recursive case
+  if (Array.isArray(array)) {
+    // loop through array
+    array.forEach(function(value) {
+      // recursively call arraySum for each element in the current array
+      sum += arraySum(value);
+    });
+  }
+
+  return sum
 };
 
 // 4. Check if a number is even.
 var isEven = function(n) {
+  // convert negative numbers to positive
+  n = Math.abs(n);
+
+  // base case(s)
+  if (n === 0) {
+    return true;
+  }
+
+  if (n === 1) {
+    return false;
+  }
+
+  // recursive case
+  return isEven(n - 2);
 };
 
 // 5. Sum all integers below a given integer.
 // sumBelow(10); // 45
 // sumBelow(7); // 21
 var sumBelow = function(n) {
+  // keep track of sum
+  var sum;
+  if (n > 0) {
+    // if n is positive, start sum 1 below current number
+    sum = n - 1;
+  } else if (n < 0) {
+    // otherwise if n is negative, start sum 1 above current number
+    sum = n + 1;
+  } else {
+    // base case
+    return 0;
+  }
+
+  // recursive case
+  return sum + sumBelow(sum);
 };
 
 // 6. Get the integers within a range (x, y).
 // range(2,9); // [3,4,5,6,7,8]
 var range = function(x, y) {
+  // keep track of numbers in range
+  var result = [];
+
+  // base/edge case (no integers in range)
+  // if the difference between the ranges is between 0 and 1
+  if (Math.abs(x - y) === 0 || Math.abs(x - y) === 1) {
+    return [];
+  }
+
+  // recursive case
+  // if starting integer is less than ending integer
+  if (x < y) {
+    // concat current x, and the range between x + 1 and y
+    result = result.concat(x + 1, range(x + 1, y));
+  } else {
+    result = result.concat(x - 1, range(x - 1, y));
+  }
+
+  return result;
 };
 
 // 7. Compute the exponent of a number.
@@ -40,6 +130,25 @@ var range = function(x, y) {
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function(base, exp) {
+  // edge case
+  if (exp === 0) {
+    return 1;
+  }
+
+  // base case
+  if (exp === 1) {
+    return base;
+  }
+  if (exp === -1) {
+    return (1 / base);
+  }
+
+  // recursive case
+  if (exp > 0) {
+    return base * exponent(base, exp - 1);
+  } else {
+    return (10 * (1 / base) * exponent(base, exp + 1))/10;
+  }
 };
 
 // 8. Determine if a number is a power of two.
@@ -47,14 +156,55 @@ var exponent = function(base, exp) {
 // powerOfTwo(16); // true
 // powerOfTwo(10); // false
 var powerOfTwo = function(n) {
+  // base case
+  if (n === 1) {
+    return true;
+  }
+  if (n < 1) {
+    return false;
+  }
+
+  // recursive case
+  return powerOfTwo(n / 2);
 };
 
 // 9. Write a function that reverses a string.
 var reverse = function(string) {
+
+  // base case
+  if (string.length === 1) {
+    return string;
+  }
+
+  // recursive case
+  // last letter concatenated with the reverse of the string minus the last letter
+  return string[string.length - 1] + reverse(string.slice(0, string.length - 1));
 };
 
 // 10. Write a function that determines if a string is a palindrome.
 var palindrome = function(string) {
+  // standardize casing
+  string = string.toLowerCase();
+
+  // base case
+  if (string.length === 1) {
+    return true;
+  }
+
+  if (string.length === 2) {
+    if (string[0] === string[1]) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // recursive case
+  if (string[0] === string[string.length - 1]) {
+    return palindrome(string.slice(1, string.length - 1));
+  } else {
+    return false;
+  }
 };
 
 // 11. Write a function that returns the remainder of x divided by y without using the
@@ -136,11 +286,69 @@ var countKeysInObj = function(obj, key) {
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+  // counter to keep track of number of times value occurs in object
+  var counter = 0;
+
+  // loop through each key in object
+  for (key in obj) {
+    // base case
+
+    // if the value at the current key is equal to the given value
+    if (obj[key] === value) {
+      // increment counter
+      counter++;
+    }
+
+    // recursive case
+
+    // if the value at the current key is an object
+    if (typeof obj[key] === 'object') {
+      // counter = counter plus the call on countValuesInObj with new object as an argument
+      counter = counter + countValuesInObj(obj[key], value);
+    }
+  }
+
+  return counter;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function(obj, oldKey, newKey) {
+  // strategy
+  /*
+   * loop through each key in the object
+   * for the base case, if the current key in the loop is equal to the oldKey
+   * set the newKey:value pair in the object equal to the oldKey:value pair
+   * this effectively renames the oldKey to the newKey while preserving the same value
+   * then delete the oldKey:value pair
+   *
+   * if the value at the current key is an object, call replaceKeysInObj on
+   * that new object
+   * this works because all objects are passed by reference, so changes to the original obj
+   * and nested objects within the original obj will be reflected in the original passed in object
+   *
+   * finally, return the altered object
+   */
+
+  for (key in obj) {
+    // base case
+    // if the current key in the loop is equal to the oldKey (to be replaced by newKey)
+    if (key === oldKey) {
+      // set the object's value at the newKey to be equal to the value at the object's oldKey
+      // effectively renaming the oldKey to newKey
+      obj[newKey] = obj[oldKey];
+      // delete the oldKey:value pair
+      delete obj[oldKey];
+    }
+
+    // recursive case
+    // if the value of the current key is an object
+    if (typeof obj[key] === 'object') {
+      // call replaceKeysInObj with this object
+      replaceKeysInObj(obj[key], oldKey, newKey);
+    }
+  }
+  return obj;
 };
 
 // 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
